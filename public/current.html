@@ -8,9 +8,10 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <!-- Navbar -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container">
-      <a class="navbar-brand" href="index.html">Weather Alert</a>
+      <a class="navbar-brand fw-bold" href="index.html">🌦 Weather Alert</a>
       <ul class="navbar-nav ms-auto">
         <li class="nav-item"><a class="nav-link" href="forecast.html">Forecast</a></li>
         <li class="nav-item"><a class="nav-link" href="tips.html">Tips</a></li>
@@ -18,13 +19,18 @@
     </div>
   </nav>
 
+  <!-- Main content -->
   <div class="container mt-4">
     <h2 class="text-center mb-4">Check Current Weather</h2>
+
+    <!-- Input box -->
     <div class="input-group mb-3">
-      <input type="text" id="cityInput" class="form-control" placeholder="Enter city name" />
+      <input type="text" id="city" class="form-control" placeholder="Enter city name" />
       <button class="btn btn-primary" onclick="getCurrentWeather()">Check</button>
     </div>
-    <div id="currentWeather" class="card p-3 text-center"></div>
+
+    <!-- Result -->
+    <div id="weatherResult" class="mt-4"></div>
   </div>
 
   <script src="script.js"></script>
