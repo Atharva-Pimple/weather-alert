@@ -1,0 +1,9 @@
+body {
+  background-color: #f7faff;
+}
+.card {
+  border-radius: 10px;
+}
+.alert {
+  font-weight: bold;
+}
