@@ -9,7 +9,7 @@ async function getForecast() {
   resultDiv.innerHTML = `<div class="text-center text-muted">Loading forecast...</div>`;
 
   try {
-    const API_BASE_URL = "https://weather-alert-nvui.onrender.com/";
+    const API_BASE_URL = "https://weather-alert-nvui.onrender.com";
     const res = await fetch(`${API_BASE_URL}/api/forecast?city=${encodeURIComponent(city)}`);
     if (!res.ok) throw new Error("API error");
     const data = await res.json();
