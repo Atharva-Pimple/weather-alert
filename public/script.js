@@ -1,50 +1,47 @@
-async function getCurrentWeather() {
-  const city = document.getElementById("cityInput").value.trim();
-  const div = document.getElementById("currentWeather");
-
+async function getForecast() {
+  const city = document.getElementById("forecastCity").value.trim();
+  const resultDiv = document.getElementById("forecastResult");
   if (!city) {
-    div.innerHTML = `<div class='alert alert-warning'>Please enter a city name.</div>`;
+    resultDiv.innerHTML = `<div class="alert alert-warning text-center">Please enter a city name.</div>`;
     return;
   }
 
+  resultDiv.innerHTML = `<div class="text-center text-muted">Loading forecast...</div>`;
+
   try {
-    const res = await fetch(`/api/weather?city=${city}`);
+    const API_BASE_URL = "https://weather-alert-nvui.onrender.com/";
+    const res = await fetch(`${API_BASE_URL}/api/forecast?city=${encodeURIComponent(city)}`);
+    if (!res.ok) throw new Error("API error");
     const data = await res.json();
 
-    if (data.cod !== 200) {
-      div.innerHTML = `<div class='alert alert-danger'>City not found or invalid key.</div>`;
+    if (!data.list || data.list.length === 0) {
+      resultDiv.innerHTML = `<div class="alert alert-info text-center">No forecast data found.</div>`;
       return;
     }
 
-    const temp = data.main.temp;
-    const cond = data.weather[0].main;
-    const wind = data.wind.speed;
+    // Extract 3 days (24-hour intervals)
+    const dailyForecasts = data.list.filter((_, idx) => idx % 8 === 0).slice(0, 3);
 
-    let alertMsg = "";
-    let alertType = "success";
+    resultDiv.innerHTML = dailyForecasts.map(day => {
+      const date = new Date(day.dt * 1000).toDateString();
+      const temp = day.main.temp.toFixed(1);
+      const desc = day.weather[0].description;
+      const icon = day.weather[0].icon;
 
-    if (temp <= 5) {
-      alertMsg = "⚠️ Frost Alert! Protect your crops.";
-      alertType = "warning";
-    } else if (temp >= 38) {
-      alertMsg = "🔥 Heatwave Alert! Ensure irrigation.";
-      alertType = "danger";
-    } else if (cond.includes("Storm") || wind > 40) {
-      alertMsg = "🌪️ Storm Alert! Take precautions.";
-      alertType = "danger";
-    } else {
-      alertMsg = "✅ Weather is safe for farming.";
-      alertType = "success";
-    }
+      return `
+        <div class="col-md-4">
+          <div class="card shadow-sm text-center p-3">
+            <h5>${date}</h5>
+            <img src="https://openweathermap.org/img/wn/${icon}@2x.png" alt="${desc}" class="mx-auto" />
+            <p class="fs-5 fw-bold">${temp}°C</p>
+            <p class="text-capitalize">${desc}</p>
+          </div>
+        </div>
+      `;
+    }).join('');
 
-    div.innerHTML = `
-      <h4>${data.name}, ${data.sys.country}</h4>
-      <p>Temperature: ${temp}°C</p>
-      <p>Condition: ${cond}</p>
-      <p>Wind: ${wind} km/h</p>
-      <div class="alert alert-${alertType}">${alertMsg}</div>
-    `;
-  } catch (err) {
-    div.innerHTML = `<div class='alert alert-danger'>Error fetching data.</div>`;
+  } catch (error) {
+    console.error("Forecast error:", error);
+    resultDiv.innerHTML = `<div class="alert alert-danger text-center">Failed to fetch forecast data.</div>`;
   }
 }
